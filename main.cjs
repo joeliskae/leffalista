@@ -65,8 +65,8 @@ function createWindow() {
       buttons: ["Asenna nyt", "Myöhemmin"],
       defaultId: 0,
       cancelId: 1,
-      title: "Päivitys saatavilla",
-      message: `Uusi versio ${info.version} on ladattu.\nKäynnistetäänkö sovellus uudelleen nyt?`
+      title: "Leffalistan uusin versio saatavilla",
+      message: `Leffalistan uusin versio ${info.version} on ladattu.\nKäynnistetäänkö sovellus uudelleen nyt?`
     });
 
     if (result === 0) {
