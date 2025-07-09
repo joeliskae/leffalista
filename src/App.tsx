@@ -232,118 +232,127 @@ function MovieModal({
 
             {/* Streaming-tiedot */}
             {streamingLoading ? (
-  <p style={{ fontStyle: 'italic', color: '#666' }}>Ladataan streaming-tietoja...</p>
-) : streamingServices.length > 0 ? (
-  <div
-    style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-      gap: '0.75rem',
-    }}
-  >
-    {Object.values(
-      streamingServices.reduce((acc, stream) => {
-        const existing = acc[stream.service];
-        const qualityOrder = ['uhd', 'hd', 'sd'];
+              <p style={{ fontStyle: "italic", color: "#666" }}>
+                Ladataan streaming-tietoja...
+              </p>
+            ) : streamingServices.length > 0 ? (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+                  gap: "0.75rem",
+                }}
+              >
+                {Object.values(
+                  streamingServices.reduce((acc, stream) => {
+                    const existing = acc[stream.service];
+                    const qualityOrder = ["uhd", "hd", "sd"];
 
-        // Pidä paras laatu
-        if (
-          !existing ||
-          qualityOrder.indexOf(stream.videoQuality) <
-            qualityOrder.indexOf(existing.videoQuality)
-        ) {
-          acc[stream.service] = stream;
-        }
+                    // Pidä paras laatu
+                    if (
+                      !existing ||
+                      qualityOrder.indexOf(stream.videoQuality) <
+                        qualityOrder.indexOf(existing.videoQuality)
+                    ) {
+                      acc[stream.service] = stream;
+                    }
 
-        return acc;
-      }, {} as Record<string, typeof streamingServices[0]>)
-    ).map((service, index) => (
-      <a
-        key={index}
-        href={service.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          display: 'block',
-          padding: '0.6rem',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          color: 'inherit',
-          backgroundColor: '#fff',
-          border: '1px solid #ddd',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-          transition: 'transform 0.15s ease',
-          cursor: 'pointer',
-        }}
-        onMouseOver={(e) =>
-          ((e.currentTarget.style.transform = 'scale(1.02)'),
-          (e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)'))
-        }
-        onMouseOut={(e) =>
-          ((e.currentTarget.style.transform = 'none'),
-          (e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.05)'))
-        }
-      >
-        <div
-          style={{
-            fontWeight: 600,
-            fontSize: '0.95rem',
-            textTransform: 'capitalize',
-            marginBottom: '0.3rem',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {service.service}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-          <span
-            style={{
-              fontSize: '0.75rem',
-              padding: '2px 5px',
-              borderRadius: '3px',
-              backgroundColor:
-                service.streamingType === 'subscription'
-                  ? '#e8f5e9'
-                  : service.streamingType === 'rent'
-                  ? '#fff3e0'
-                  : '#e3f2fd',
-              color:
-                service.streamingType === 'subscription'
-                  ? '#2e7d32'
-                  : service.streamingType === 'rent'
-                  ? '#ef6c00'
-                  : '#1565c0',
-              width: 'fit-content',
-            }}
-          >
-            {service.streamingType === 'subscription'
-              ? 'Tilaus'
-              : service.streamingType === 'rent'
-              ? 'Vuokraus'
-              : 'Osto'}
-          </span>
+                    return acc;
+                  }, {} as Record<string, (typeof streamingServices)[0]>)
+                ).map((service, index) => (
+                  <a
+                    key={index}
+                    href={service.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "block",
+                      padding: "0.6rem",
+                      borderRadius: "8px",
+                      textDecoration: "none",
+                      color: "inherit",
+                      backgroundColor: "#fff",
+                      border: "1px solid #ddd",
+                      boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+                      transition: "transform 0.15s ease",
+                      cursor: "pointer",
+                    }}
+                    onMouseOver={(e) => (
+                      (e.currentTarget.style.transform = "scale(1.02)"),
+                      (e.currentTarget.style.boxShadow =
+                        "0 4px 8px rgba(0,0,0,0.1)")
+                    )}
+                    onMouseOut={(e) => (
+                      (e.currentTarget.style.transform = "none"),
+                      (e.currentTarget.style.boxShadow =
+                        "0 1px 4px rgba(0,0,0,0.05)")
+                    )}
+                  >
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        fontSize: "0.95rem",
+                        textTransform: "capitalize",
+                        marginBottom: "0.3rem",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {service.service}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.2rem",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "0.75rem",
+                          padding: "2px 5px",
+                          borderRadius: "3px",
+                          backgroundColor:
+                            service.streamingType === "subscription"
+                              ? "#e8f5e9"
+                              : service.streamingType === "rent"
+                              ? "#fff3e0"
+                              : "#e3f2fd",
+                          color:
+                            service.streamingType === "subscription"
+                              ? "#2e7d32"
+                              : service.streamingType === "rent"
+                              ? "#ef6c00"
+                              : "#1565c0",
+                          width: "fit-content",
+                        }}
+                      >
+                        {service.streamingType === "subscription"
+                          ? "Tilaus"
+                          : service.streamingType === "rent"
+                          ? "Vuokraus"
+                          : "Osto"}
+                      </span>
 
-          {service.videoQuality && (
-            <span style={{ fontSize: '0.7rem', color: '#777' }}>
-              {service.videoQuality.toUpperCase()}
-            </span>
-          )}
-        </div>
-      </a>
-    ))}
-  </div>
-) : movie.imdbID ? (
-  <p style={{ fontStyle: 'italic', color: '#666' }}>
-    Ei löytynyt streaming-palveluja Suomesta
-  </p>
-) : (
-  <p style={{ fontStyle: 'italic', color: '#666' }}>
-    Lisää IMDb ID nähdäksesi streaming-tiedot
-  </p>
-)}
-
+                      {service.videoQuality && (
+                        <span style={{ fontSize: "0.7rem", color: "#777" }}>
+                          {service.videoQuality.toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : movie.imdbID ? (
+              <p style={{ fontStyle: "italic", color: "#666" }}>
+                Ei löytynyt streaming-palveluja Suomesta
+              </p>
+            ) : (
+              <p style={{ fontStyle: "italic", color: "#666" }}>
+                Lisää IMDb ID nähdäksesi streaming-tiedot
+              </p>
+            )}
 
             {editMode ? (
               <>
@@ -422,16 +431,16 @@ function App() {
 
   // Sloganit lista
   const slogans = [
-    "Aina jotain katsottavaa",
-    "Leffalista täynnä helmiä",
-    "Seuraava elokuva-ilta voi alkaa",
-    "Täydellinen leffa odottaa",
-    "Sinun oma elokuvateatteri",
-    "Katsotaan jotain hyvää",
-    "Leffahetki alkakoon",
-    "Popcornit valmiina",
-    "Parhaat leffat yhdessä paikassa",
-    "Elokuvamagia käynnistyy",
+    "Kaksi katsojaa, yksi tarina",
+    "Yhteisiä hetkiä, parhaita leffoja",
+    "Yksi lista, kaksi mielipidettä",
+    "Kaksi päätä, yksi katsottu klassikko",
+    "Leffa-algoritmi optimoitu kahdelle",
+    "Ctrl + You + Me = Play",
+    "Olipa kerran... Leffalista",
+    "Tähtienvälistä viihdettä kahdelle",
+    "Play. Pause. Snuggle",
+    "Seitsemän ihmisten käyttöön. Yksi meille",
   ];
 
   const [currentSlogan] = useState(() => {
@@ -665,22 +674,12 @@ function App() {
             fontWeight: "bold",
             textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-          }}
-        >
-          Aina jotain katsottavaa
-        </h1>
-        <p
-          style={{
-            textAlign: "center",
-            color: "#ddd",
-            marginBottom: "2rem",
-            fontSize: "1.2rem",
-            fontStyle: "italic",
-            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+            minWidth: "500px",
+            maxWidth: "500px",
           }}
         >
           {currentSlogan}
-        </p>
+        </h1>
         <div className="controls">
           <div className="input-wrapper" style={{ position: "relative" }}>
             <input
