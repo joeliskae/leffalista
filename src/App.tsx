@@ -165,6 +165,25 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Sloganit lista
+  const slogans = [
+    "Kaksi katsojaa, yksi tarina",
+    "Yhteisiä hetkiä, parhaita leffoja",
+    "Yksi lista, kaksi mielipidettä",
+    "Kaksi päätä, yksi katsottu klassikko",
+    "Leffa-algoritmi optimoitu kahdelle",
+    "Ctrl + You + Me = Play",
+    "Olipa kerran... Leffalista",
+    "Tähtienvälistä viihdettä kahdelle",
+    "Play. Pause. Snuggle",
+    "Seitsemän ihmisten käyttöön. Yksi meille",
+    
+  ];
+  
+  const [currentSlogan, setCurrentSlogan] = useState(() => {
+    return slogans[Math.floor(Math.random() * slogans.length)];
+  });
 
   useEffect(() => {
     fetchMovies();
@@ -356,10 +375,10 @@ function App() {
         }}
       >
         <p style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-          Passion for movies — bringing our watchlist to life!
+          Passion ❤️ for movies — bringing our watchlist to life!
           Made with love ❤️ by Lihis
         </p>
-        <p style={{ fontSize: '0.7rem' }}>Versio {__APP_VERSION__}</p>
+        <p style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>Versio {__APP_VERSION__}</p>
       </footer>
     );
   }
@@ -370,14 +389,17 @@ function App() {
         <h1 style={{
           textAlign: 'center',
           color: 'white',
-          marginBottom: '2.2rem',
-          fontSize: '2.3rem',
+          marginBottom: '2rem',
+          fontSize: '2.5rem',
           fontWeight: 'bold',
           textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+          minWidth: '500px',
+          maxWidth: '500px',
         }}>
-          Kaksi katsojaa, yksi tarina.
+          {currentSlogan}
         </h1>
+        
         <div className="controls">
           <div className="input-wrapper" style={{ position: 'relative' }}>
             <input
