@@ -27,6 +27,8 @@ function createWindow() {
   }
 
   // win.webContents.openDevTools({ mode: 'detach' });
+  autoUpdater.checkForUpdatesAndNotify(); // auto update notif
+
 }
 
 app.whenReady().then(() => {

@@ -13,7 +13,9 @@
     "preview": "vite preview",
     "electron": "electron .",
     "start-electron": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "publish": "electron-builder --publish always"
+
   },
   "build": {
     "appId": "com.joelryynanen.leffalista",
@@ -22,6 +24,13 @@
     "directories": {
       "buildResources": "assets"
     },
+    "publish": [
+    {
+      "provider": "github",
+      "owner": "joeliskae",
+      "repo": "leffalista"
+    }
+  ],
     "files": [
       "dist/**/*",
       "main.cjs",
@@ -46,6 +55,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@supabase/supabase-js": "^2.50.3",
     "autoprefixer": "^10.4.21",
+    "electron-updater": "^6.6.2",
     "postcss": "^8.5.6",
     "react": "^19.1.0",
     "react-beautiful-dnd": "^13.1.1",
