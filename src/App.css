@@ -1,0 +1,219 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: hotpink url('/tausta.jpeg') center center;
+  background-size: cover;
+  background-attachment: fixed;
+  color: #222;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2rem;
+}
+
+.body {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px; /* Kasvatettu 600px -> 800px */
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1rem;
+  align-items: center;
+  width: 100%;
+  max-width: 600px; /* Kasvatettu 400px -> 600px */
+}
+
+.input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 0.75rem 3.5rem 0.75rem 1rem;
+  border: none;
+  border-radius: 999px;
+  background: #222;
+  color: white;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.input-wrapper input::placeholder {
+  color: #bbb;
+}
+
+.add-button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-button:hover {
+  background: #eee;
+}
+
+.random-button {
+  background: white;
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.random-button:hover {
+  background: #eee;
+}
+
+.movies-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px; /* Kasvatettu 400px -> 600px */
+  margin: 0 auto;
+  gap: 6px;
+}
+
+.movie-item {
+  background: white;
+  display: flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 6px;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  min-height: 60px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.movie-item.watched {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.poster {
+  height: 48px;
+  width: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.movie-title {
+  flex: 1;
+  cursor: pointer;
+  min-width: 0;
+  font-weight: 500;
+  color: #333;
+}
+
+.badge {
+  background: #ff9999;
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.badge:hover {
+  background: #ff7777;
+}
+
+.remove {
+  background: white;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.remove:hover {
+  background: #f0f0f0;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal h2 {
+  margin: 0 0 1rem 0;
+}
+
+.modal-poster {
+  max-width: 200px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.modal-close {
+  background: hotpink;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.modal-close:hover {
+  background: #ff1493;
+}
