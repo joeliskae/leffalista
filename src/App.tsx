@@ -181,7 +181,7 @@ function App() {
     
   ];
   
-  const [currentSlogan, setCurrentSlogan] = useState(() => {
+  const [currentSlogan] = useState(() => {
     return slogans[Math.floor(Math.random() * slogans.length)];
   });
 
