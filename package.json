@@ -1,6 +1,6 @@
 {
   "name": "leffalista",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Leffalista ❤️🍿 – Katselulistasi kahdelle, nyt työpöydällä!",
   "author": "Joel Ryynänen",
   "productName": "Leffalista",
@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "bump": "node bump-version.js",
     "preview": "vite preview",
     "electron": "electron .",
     "start-electron": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
@@ -21,6 +22,8 @@
     "appId": "com.joelryynanen.leffalista",
     "productName": "Leffalista",
     "copyright": "© 2025 Joel Ryynänen",
+    "asar": true,
+
     "directories": {
       "buildResources": "assets"
     },
@@ -34,7 +37,8 @@
     "files": [
       "dist/**/*",
       "main.cjs",
-      "preload.js"
+      "preload.js",
+      "package.json"
     ],
     "win": {
       "target": "nsis",
@@ -50,17 +54,10 @@
     }
   },
   "dependencies": {
-    "@dnd-kit/core": "^6.3.1",
-    "@dnd-kit/sortable": "^10.0.0",
-    "@dnd-kit/utilities": "^3.2.2",
     "@supabase/supabase-js": "^2.50.3",
-    "autoprefixer": "^10.4.21",
     "electron-updater": "^6.6.2",
-    "postcss": "^8.5.6",
     "react": "^19.1.0",
-    "react-beautiful-dnd": "^13.1.1",
-    "react-dom": "^19.1.0",
-    "tailwindcss": "^4.1.11"
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
@@ -68,6 +65,9 @@
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
+    "autoprefixer": "^10.4.21",
+    "tailwindcss": "^4.1.11",
+    "postcss": "^8.5.6",
     "electron": "^37.2.0",
     "electron-builder": "^26.0.12",
     "eslint": "^9.30.1",

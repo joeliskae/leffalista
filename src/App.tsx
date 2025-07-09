@@ -18,6 +18,9 @@ type Movie = {
   actors?: string;
 };
 
+declare const __APP_VERSION__: string;
+
+
 const OMDB_API_KEY = import.meta.env.VITE_OMDB_API_KEY!;
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
@@ -349,6 +352,7 @@ function App() {
       <p style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
         Passion ❤️ for movies — bringing our watchlist to life!
           Made with love ❤️ by Lihis</p>
+          <p style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>Versio {__APP_VERSION__}</p>
     </footer>
   );
 }
