@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const url = require('url');
 
@@ -27,7 +28,27 @@ function createWindow() {
   }
 
   // win.webContents.openDevTools({ mode: 'detach' });
-  autoUpdater.checkForUpdatesAndNotify(); // auto update notif
+
+  // 🟡 Tämä tarkistaa päivitykset ja näyttää toastin
+  autoUpdater.checkForUpdatesAndNotify();
+
+
+  // 🟢 Tämä asentaa päivityksen heti, kun se on ladattu
+  autoUpdater.on("update-downloaded", () => {
+    const result = dialog.showMessageBoxSync({
+      type: "info",
+      buttons: ["Asenna nyt", "Myöhemmin"],
+      defaultId: 0,
+      cancelId: 1,
+      title: "Päivitys saatavilla",
+      message: "Uusi versio on ladattu. Käynnistetäänkö uudelleen nyt?"
+    });
+
+    if (result === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+
 
 }
 

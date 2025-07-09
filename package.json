@@ -14,7 +14,7 @@
     "electron": "electron .",
     "start-electron": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "dist": "electron-builder",
-    "publish": "electron-builder --publish always"
+    "publish": "node publish.cjs"
 
   },
   "build": {
