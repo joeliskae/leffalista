@@ -347,8 +347,8 @@ function App() {
       }}
     >
       <p style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-        Passion for movies — bringing our watchlist to life!
-        Made with love ❤️ by Lihis</p>
+        Passion ❤️ for movies — bringing our watchlist to life!
+          Made with love ❤️ by Lihis</p>
     </footer>
   );
 }
