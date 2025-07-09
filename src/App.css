@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background: hotpink url('/tausta.jpeg') center center;
+  background: hotpink url('/tausta.jpg') center center;
   background-size: cover;
   background-attachment: fixed;
   color: #222;
@@ -102,7 +102,7 @@ body {
   width: 100%;
   max-width: 600px; /* Kasvatettu 400px -> 600px */
   margin: 0 auto;
-  gap: 6px;
+  gap: 4px;
 }
 
 .movie-item {
@@ -112,7 +112,7 @@ body {
   border-radius: 999px;
   padding: 0.75rem 1rem;
   margin-bottom: 6px;
-  gap: 12px;
+  gap: 14px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   min-height: 60px;
   width: 100%;

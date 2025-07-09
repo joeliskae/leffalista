@@ -20,7 +20,6 @@ type Movie = {
 
 declare const __APP_VERSION__: string;
 
-
 const OMDB_API_KEY = import.meta.env.VITE_OMDB_API_KEY!;
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
@@ -100,32 +99,16 @@ function MovieModal({ movie, onClose, onUpdateImdbID }: {
               {movie.rating && (
                 <span style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'gold', marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                   {movie.rating} <span style={{ fontSize: '1.9rem', color: 'gold' }}>★</span>
-
                 </span>
               )}
             </div>
 
-
-            {/* <p><strong>IMDb-arvosana:</strong> {movie.rating || 'Ei tietoa'}</p> */}
             {movie.genre && <p><strong>Genre:</strong> {movie.genre}</p>}
             {movie.runtime && <p><strong>Kesto:</strong> {movie.runtime}</p>}
             {movie.director && <p><strong>Ohjaaja:</strong> {movie.director}</p>}
             {movie.actors && <p><strong>Näyttelijät:</strong> {movie.actors}</p>}
 
             <p><strong>Kuvaus:</strong> {movie.plot || 'Ei kuvausta'}</p>
-
-            {/* {movie.imdbID && (
-              <p>
-                <strong>IMDb:</strong>{' '}
-                <a
-                  href={`https://www.imdb.com/title/${movie.imdbID}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {movie.imdbID}
-                </a>
-              </p>
-            )} */}
 
             {editMode ? (
               <>
@@ -148,10 +131,6 @@ function MovieModal({ movie, onClose, onUpdateImdbID }: {
                 ✏️ Muokkaa
               </button>
             )}
-
-            {/* <button onClick={onClose} style={{ marginTop: '1rem', backgroundColor: '#eee' }}>
-              Sulje
-            </button> */}
           </div>
         </div>
       </div>
@@ -184,6 +163,8 @@ function App() {
   const [input, setInput] = useState('');
   const [modalMovie, setModalMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isSearchMode, setIsSearchMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchMovies();
@@ -195,7 +176,6 @@ function App() {
           setMovies(prev => [payload.new as Movie, ...prev]);
         } else if (payload.eventType === 'UPDATE') {
           setMovies(prev => prev.map(m => m.id === payload.new.id ? payload.new as Movie : m));
-          // Jos modalissa näkyvä elokuva päivitettiin, päivitä myös modalMovie:
           if (modalMovie && modalMovie.id === payload.new.id) {
             setModalMovie(payload.new as Movie);
           }
@@ -333,51 +313,123 @@ function App() {
     }
   };
 
-  function Footer() {
-  return (
-    <footer
-      style={{
-        marginTop: '2rem',
-        padding: '1rem 0',
-        // borderTop: '1px solid #ddd',
-        textAlign: 'center',
-        fontStyle: 'italic',
-        color: 'white',
-        fontSize: '0.9rem',
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        // backgroundColor: '#f9f9f9',
-        borderRadius: '4px',
-      }}
-    >
-      <p style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-        Passion ❤️ for movies — bringing our watchlist to life!
-          Made with love ❤️ by Lihis</p>
-          <p style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>Versio {__APP_VERSION__}</p>
-    </footer>
-  );
-}
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (isSearchMode) {
+      setSearchQuery(value);
+    } else {
+      setInput(value);
+    }
+  };
 
+  const toggleSearchMode = () => {
+    setIsSearchMode(!isSearchMode);
+    setSearchQuery('');
+    setInput('');
+  };
+
+  // Filtteröity lista
+  const filteredMovies = isSearchMode && searchQuery.trim() 
+    ? movies.filter(movie => {
+        const query = searchQuery.toLowerCase();
+        return (
+          movie.title.toLowerCase().includes(query) ||
+          movie.genre?.toLowerCase().includes(query) ||
+          movie.director?.toLowerCase().includes(query) ||
+          movie.actors?.toLowerCase().includes(query)
+        );
+      })
+    : movies;
+
+  function Footer() {
+    return (
+      <footer
+        style={{
+          marginTop: '2rem',
+          padding: '1rem 0',
+          textAlign: 'center',
+          fontStyle: 'italic',
+          color: 'white',
+          fontSize: '0.9rem',
+          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+          borderRadius: '4px',
+        }}
+      >
+        <p style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
+          Passion for movies — bringing our watchlist to life!
+          Made with love ❤️ by Lihis
+        </p>
+        <p style={{ fontSize: '0.7rem' }}>Versio {__APP_VERSION__}</p>
+      </footer>
+    );
+  }
 
   return (
     <div className="body">
       <div className="container">
-
+        <h1 style={{
+          textAlign: 'center',
+          color: 'white',
+          marginBottom: '2.2rem',
+          fontSize: '2.3rem',
+          fontWeight: 'bold',
+          textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+        }}>
+          Kaksi katsojaa, yksi tarina.
+        </h1>
         <div className="controls">
-          <div className="input-wrapper">
+          <div className="input-wrapper" style={{ position: 'relative' }}>
             <input
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && addMovie()}
-              placeholder="Lisää leffa"
+              value={isSearchMode ? searchQuery : input}
+              onChange={handleInputChange}
+              onKeyDown={e => e.key === 'Enter' && !isSearchMode && addMovie()}
+              placeholder={isSearchMode ? "Haku..." : "Lisää leffa"}
               disabled={loading}
+              style={{
+                ...(isSearchMode ? { backgroundColor: '#fce4ec', borderColor: '#e91e63', color: '#333' } : {}),
+                paddingRight: '70px' // Tilaa toggle-napille
+              }}
             />
-            <button
-              className="add-button"
-              onClick={addMovie}
-              disabled={loading}
+            <div 
+              className="toggle-switch"
+              onClick={toggleSearchMode}
+              title={isSearchMode ? "Lisää leffa" : "Haku"}
+              style={{
+                position: 'absolute',
+                right: '8px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '50px',
+                height: '26px',
+                backgroundColor: isSearchMode ? '#e91e63' : '#4caf50',
+                borderRadius: '13px',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '2px'
+              }}
             >
-              {loading ? '⏳' : '➕'}
-            </button>
+              <div
+                style={{
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '50%',
+                  backgroundColor: 'white',
+                  position: 'absolute',
+                  left: isSearchMode ? '26px' : '2px',
+                  transition: 'left 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                }}
+              >
+                {isSearchMode ? '🔍' : '➕'}
+              </div>
+            </div>
           </div>
           <button
             className="random-button"
@@ -387,8 +439,21 @@ function App() {
           </button>
         </div>
 
+        {isSearchMode && searchQuery.trim() && (
+          <div style={{ 
+            margin: '1rem 0', 
+            padding: '0.5rem', 
+            backgroundColor: 'rgba(255,255,255,0.1)', 
+            borderRadius: '4px',
+            color: 'white',
+            fontSize: '0.9rem'
+          }}>
+            Löytyi {filteredMovies.length} tulosta haulle "{searchQuery}"
+          </div>
+        )}
+
         <div className="movies-list">
-          {movies.map((movie) => (
+          {filteredMovies.map((movie) => (
             <MovieItem
               key={movie.id}
               movie={movie}
@@ -406,10 +471,8 @@ function App() {
             onUpdateImdbID={updateMovieByImdbID}
           />
         )}
-        <Footer></Footer>
+        <Footer />
       </div>
-      
-
     </div>
   );
 }
