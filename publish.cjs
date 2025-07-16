@@ -3,6 +3,7 @@ const { execSync } = require("child_process");
 const builder = require("electron-builder");
 
 try {
+  
   console.log("🏗️ Rakennetaan frontend...");
   execSync("npm run build", { stdio: "inherit" }); // build frontti
   
@@ -17,6 +18,7 @@ try {
 
   console.log("🔧 Päivitetään versionumero...");
   execSync("node bump-version.js", { stdio: "inherit" }); // aja bump-skripti
+
 } catch (err) {
   console.error("❌ Prosessi epäonnistui:", err);
 }

@@ -13,6 +13,8 @@ import { MovieItem } from "./MovieItem";
 import { MovieModal } from "./MovieModal";
 import { Footer } from "./Footer";
 import "./App.css";
+import { MovieSearchInput } from "./MovieSearchInput";
+import { type OMDBSearchResult } from "./omdb";
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -25,8 +27,8 @@ function App() {
 
   useEffect(() => {
     loadMovies();
-      const cleanup = setupRealtimeSubscription();
-      return cleanup; // ← Tämä puuttuu!
+    const cleanup = setupRealtimeSubscription();
+    return cleanup;
   }, []);
 
   const loadMovies = async () => {
@@ -75,6 +77,16 @@ function App() {
     if (success) {
       setInput("");
     }
+    setLoading(false);
+  };
+
+  // Uusi funktio OMDB-valinnalle
+  const handleMovieSelect = async (movie: OMDBSearchResult) => {
+    setLoading(true);
+    
+    // Käytä OMDB-datan Title-kenttää addMovieAPI:lle
+    const success = await addMovieAPI(movie.Title);
+    
     setLoading(false);
   };
 
@@ -134,8 +146,6 @@ function App() {
             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
             minWidth: "500px",
             maxWidth: "500px",
-            minWidth: "500px",
-            maxWidth: "500px",
           }}
         >
           {currentSlogan}
@@ -143,25 +153,27 @@ function App() {
         
         <div className="controls">
           <div className="input-wrapper" style={{ position: "relative" }}>
-            <input
-              value={isSearchMode ? searchQuery : input}
-              onChange={handleInputChange}
-              onKeyDown={(e) =>
-                e.key === "Enter" && !isSearchMode && handleAddMovie()
-              }
-              placeholder={isSearchMode ? "Haku..." : "Lisää leffa"}
-              disabled={loading}
-              style={{
-                ...(isSearchMode
-                  ? {
-                      backgroundColor: "#fce4ec",
-                      borderColor: "#e91e63",
-                      color: "#333",
-                    }
-                  : {}),
-                paddingRight: "70px",
-              }}
-            />
+            {/* Vaihdetaan input autocomplete-komponenttiin kun ei ole search-moodissa */}
+            {!isSearchMode ? (
+              <MovieSearchInput 
+                onMovieSelect={handleMovieSelect}
+                placeholder="Hae ja lisää leffa..."
+                disabled={loading}
+              />
+            ) : (
+              <input
+                value={searchQuery}
+                onChange={handleInputChange}
+                placeholder="Haku..."
+                style={{
+                  backgroundColor: "#fce4ec",
+                  borderColor: "#e91e63",
+                  color: "#333",
+                  paddingRight: "70px",
+                }}
+              />
+            )}
+            
             <div
               className="toggle-switch"
               onClick={toggleSearchMode}
