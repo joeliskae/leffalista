@@ -125,3 +125,25 @@ export const updateMovieByImdbID = async (movieId: string, imdbID: string): Prom
   }
   return true;
 };
+
+
+export const toggleHeart = async (
+  movieId: string, 
+  heartType: 'yellow' | 'pink', 
+  newValue: boolean
+): Promise<boolean> => {
+  const columnName = heartType === 'yellow' ? 'yellow_heart' : 'pink_heart';
+  
+  const { error } = await supabase
+    .from("movies")
+    .update({ [columnName]: newValue })
+    .eq("id", movieId);
+
+  if (error) {
+    console.error(`Error updating ${heartType} heart:`, error);
+    return false;
+  }
+  
+  console.log(`💖 ${heartType} sydän ${newValue ? 'lisätty' : 'poistettu'} leffallle ${movieId}`);
+  return true;
+};

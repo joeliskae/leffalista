@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { type Movie } from "./types";
+import { type Movie, type User } from "./types";
 import { supabase } from "./config";
 import { 
   fetchMovies, 
   addMovie as addMovieAPI, 
   toggleWatched as toggleWatchedAPI, 
   removeMovie as removeMovieAPI,
-  updateMovieByImdbID as updateMovieByImdbIDAPI
+  updateMovieByImdbID as updateMovieByImdbIDAPI,
+  toggleHeart as toggleHeartAPI // Tämä pitää vielä luoda api.ts:ssä
 } from "./api";
 import { getRandomSlogan, pickRandomMovie, filterMovies } from "./utils";
 import { MovieItem } from "./MovieItem";
 import { MovieModal } from "./MovieModal";
 import { Footer } from "./Footer";
+import { UserSelection } from "./UserSelection"; // Tämä pitää vielä luoda
 import "./App.css";
 import { MovieSearchInput } from "./MovieSearchInput";
 import { type OMDBSearchResult } from "./omdb";
@@ -24,46 +26,94 @@ function App() {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSlogan] = useState(getRandomSlogan());
+  
+  // Uudet käyttäjähallinta state:t
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [showUserSelection, setShowUserSelection] = useState(false);
 
   useEffect(() => {
+    checkSavedUser();
     loadMovies();
     const cleanup = setupRealtimeSubscription();
     return cleanup;
   }, []);
 
-const loadMovies = async () => {
-  try {
-    const movieData = await fetchMovies();
-    setMovies(movieData);
-    console.log("🎬 Leffat ladattu:", movieData.length, "kpl");
-
-    // Ilmoita pääprosessille että data on ladattu
-    if (window.electronAPI) {
-      try {
-        console.log("📡 Lähetetään 'data-loaded' viestiä...");
-        window.electronAPI.sendMessage("data-loaded", null);
-        console.log("✅ 'data-loaded' viesti lähetetty");
-      } catch (err) {
-        console.error("❌ IPC-viesti epäonnistui:", err);
+  // Tarkista onko käyttäjä jo valittu
+  const checkSavedUser = async () => {
+    try {
+      if (window.electronAPI) {
+        const savedUser = await window.electronAPI.getStoredData('currentUser');
+        if (savedUser) {
+          setCurrentUser(savedUser);
+          console.log("👤 Käyttäjä ladattu:", savedUser);
+        } else {
+          console.log("👤 Ei tallennettua käyttäjää, näytetään valinta");
+          setShowUserSelection(true);
+        }
       }
-    } else {
-      console.warn("⚠️ window.electronAPI ei ole saatavilla (dev-mode?)");
+    } catch (error) {
+      console.error('❌ Virhe käyttäjätietojen lataamisessa:', error);
+      setShowUserSelection(true);
     }
-  } catch (error) {
-    console.error("❌ Virhe ladattaessa leffoja:", error);
+  };
+
+  // Käyttäjän valinta
+  const handleUserSelect = async (heartColor: 'yellow' | 'pink') => {
+    const user: User = {
+      id: crypto.randomUUID(),
+      name: heartColor === 'yellow' ? 'Keltainen käyttäjä' : 'Pinkki käyttäjä',
+      heart_color: heartColor,
+      created_at: new Date().toISOString()
+    };
     
-    // Lähetetään data-loaded vaikka lataus epäonnistui
+    setCurrentUser(user);
+    setShowUserSelection(false);
+    
+    console.log("👤 Käyttäjä valittu:", user);
+    
+    // Tallenna käyttäjä
     if (window.electronAPI) {
       try {
-        window.electronAPI.sendMessage("data-loaded", null);
-        console.log("✅ 'data-loaded' lähetetty virheen jälkeen");
-      } catch (err) {
-        console.error("❌ IPC-viesti epäonnistui virheen jälkeen:", err);
+        await window.electronAPI.storeData('currentUser', user);
+        console.log("💾 Käyttäjä tallennettu");
+      } catch (error) {
+        console.error("❌ Käyttäjän tallennus epäonnistui:", error);
       }
     }
-  }
-};
+  };
 
+  const loadMovies = async () => {
+    try {
+      const movieData = await fetchMovies();
+      setMovies(movieData);
+      console.log("🎬 Leffat ladattu:", movieData.length, "kpl");
+
+      // Ilmoita pääprosessille että data on ladattu
+      if (window.electronAPI) {
+        try {
+          console.log("📡 Lähetetään 'data-loaded' viestiä...");
+          window.electronAPI.sendMessage("data-loaded", null);
+          console.log("✅ 'data-loaded' viesti lähetetty");
+        } catch (err) {
+          console.error("❌ IPC-viesti epäonnistui:", err);
+        }
+      } else {
+        console.warn("⚠️ window.electronAPI ei ole saatavilla (dev-mode?)");
+      }
+    } catch (error) {
+      console.error("❌ Virhe ladattaessa leffoja:", error);
+      
+      // Lähetetään data-loaded vaikka lataus epäonnistui
+      if (window.electronAPI) {
+        try {
+          window.electronAPI.sendMessage("data-loaded", null);
+          console.log("✅ 'data-loaded' lähetetty virheen jälkeen");
+        } catch (err) {
+          console.error("❌ IPC-viesti epäonnistui virheen jälkeen:", err);
+        }
+      }
+    }
+  };
 
   const setupRealtimeSubscription = () => {
     const channel = supabase
@@ -109,13 +159,9 @@ const loadMovies = async () => {
     setLoading(false);
   };
 
-  // Uusi funktio OMDB-valinnalle
   const handleMovieSelect = async (movie: OMDBSearchResult) => {
     setLoading(true);
-    
-    // Käytä OMDB-datan Title-kenttää addMovieAPI:lle
     const success = await addMovieAPI(movie.Title);
-    
     setLoading(false);
   };
 
@@ -128,6 +174,21 @@ const loadMovies = async () => {
 
   const handleRemoveMovie = async (id: string) => {
     await removeMovieAPI(id);
+  };
+
+  // Uusi sydän-äänestys
+  const handleHeartToggle = async (movieId: string) => {
+    if (!currentUser) return;
+    
+    const movie = movies.find((m) => m.id === movieId);
+    if (!movie) return;
+
+    const heartType = currentUser.heart_color;
+    const currentValue = heartType === 'yellow' ? movie.yellow_heart : movie.pink_heart;
+    
+    console.log(`💖 Vaihdetaan ${heartType} sydän leffallle:`, movie.title, "nykyarvo:", currentValue);
+    
+    await toggleHeartAPI(movieId, heartType, !currentValue);
   };
 
   const handlePickRandom = () => {
@@ -161,6 +222,24 @@ const loadMovies = async () => {
     ? filterMovies(movies, searchQuery)
     : movies;
 
+  // Näytä käyttäjävalinta jos ei ole valittu
+  if (showUserSelection) {
+    return <UserSelection onUserSelect={handleUserSelect} />;
+  }
+
+  // Näytä loading jos käyttäjä ei ole vielä ladattu
+  if (!currentUser) {
+    return (
+      <div className="body">
+        <div className="container">
+          <div style={{ textAlign: "center", color: "white", padding: "2rem" }}>
+            <h2>Ladataan...</h2>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="body">
       <div className="container">
@@ -182,7 +261,6 @@ const loadMovies = async () => {
         
         <div className="controls">
           <div className="input-wrapper" style={{ position: "relative" }}>
-            {/* Vaihdetaan input autocomplete-komponenttiin kun ei ole search-moodissa */}
             {!isSearchMode ? (
               <MovieSearchInput 
                 onMovieSelect={handleMovieSelect}
@@ -268,9 +346,11 @@ const loadMovies = async () => {
             <MovieItem
               key={movie.id}
               movie={movie}
+              currentUser={currentUser}
               onTitleClick={setModalMovie}
               onToggleWatched={handleToggleWatched}
               onRemove={handleRemoveMovie}
+              onHeartToggle={handleHeartToggle}
             />
           ))}
         </div>

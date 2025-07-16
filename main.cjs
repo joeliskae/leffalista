@@ -3,6 +3,7 @@ const { autoUpdater } = require("electron-updater");
 const path = require("path");
 const url = require("url");
 const log = require("electron-log");
+const fs = require("fs");
 
 let splashWindow = null;
 let mainWindow = null;
@@ -174,6 +175,50 @@ ipcMain.on("data-loaded", () => {
   log.info("📊 Data ladattu React-appista");
   dataLoaded = true;
   tryCloseSplash();
+});
+
+// Tallenna dataa käyttäjän AppData-kansioon
+ipcMain.handle('store-data', async (event, key, data) => {
+  try {
+    const userDataPath = app.getPath('userData');
+    const dataPath = path.join(userDataPath, 'appData.json');
+    
+    let existingData = {};
+    if (fs.existsSync(dataPath)) {
+      const fileContent = fs.readFileSync(dataPath, 'utf8');
+      existingData = JSON.parse(fileContent);
+    }
+    
+    existingData[key] = data;
+    fs.writeFileSync(dataPath, JSON.stringify(existingData, null, 2));
+    
+    log.info(`💾 Tallennettu data: ${key}`);
+    return true;
+  } catch (error) {
+    log.error(`❌ Virhe datan tallennuksessa (${key}):`, error);
+    return false;
+  }
+});
+
+// Lataa dataa käyttäjän AppData-kansiosta
+ipcMain.handle('get-stored-data', async (event, key) => {
+  try {
+    const userDataPath = app.getPath('userData');
+    const dataPath = path.join(userDataPath, 'appData.json');
+    
+    if (fs.existsSync(dataPath)) {
+      const fileContent = fs.readFileSync(dataPath, 'utf8');
+      const data = JSON.parse(fileContent);
+      log.info(`📖 Ladattu data: ${key}`);
+      return data[key] || null;
+    }
+    
+    log.info(`📖 Ei löydetty dataa: ${key}`);
+    return null;
+  } catch (error) {
+    log.error(`❌ Virhe datan lukemisessa (${key}):`, error);
+    return null;
+  }
 });
 
 app.whenReady().then(() => {
