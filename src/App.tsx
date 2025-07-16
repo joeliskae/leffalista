@@ -134,6 +134,8 @@ function App() {
             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
             minWidth: "500px",
             maxWidth: "500px",
+            minWidth: "500px",
+            maxWidth: "500px",
           }}
         >
           {currentSlogan}
