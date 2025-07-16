@@ -7,10 +7,15 @@ try {
   console.log("🏗️ Rakennetaan frontend...");
   execSync("npm run build", { stdio: "inherit" }); // build frontti
   
-  console.log("📦 Rakennetaan Electron-paketti ja julkaistaan...");
-  builder.build({ publish: "always" })
+  console.log("📦 Rakennetaan Windows-paketti ja julkaistaan...");
+  builder.build({ 
+    publish: "always",
+    win: ["nsis"], // Buildaa vain Windowsille
+    // linux: [], // Tyhjä = ei buildata
+    // mac: [] // Tyhjä = ei buildata
+  })
   .then(() => {
-    console.log("✅ Julkaisu onnistui!");
+    console.log("✅ Windows-julkaisu onnistui!");
   })
   .catch((err) => {
     console.error("❌ Julkaisu epäonnistui:", err);
