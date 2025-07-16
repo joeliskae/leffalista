@@ -31,10 +31,39 @@ function App() {
     return cleanup;
   }, []);
 
-  const loadMovies = async () => {
+const loadMovies = async () => {
+  try {
     const movieData = await fetchMovies();
     setMovies(movieData);
-  };
+    console.log("🎬 Leffat ladattu:", movieData.length, "kpl");
+
+    // Ilmoita pääprosessille että data on ladattu
+    if (window.electronAPI) {
+      try {
+        console.log("📡 Lähetetään 'data-loaded' viestiä...");
+        window.electronAPI.sendMessage("data-loaded", null);
+        console.log("✅ 'data-loaded' viesti lähetetty");
+      } catch (err) {
+        console.error("❌ IPC-viesti epäonnistui:", err);
+      }
+    } else {
+      console.warn("⚠️ window.electronAPI ei ole saatavilla (dev-mode?)");
+    }
+  } catch (error) {
+    console.error("❌ Virhe ladattaessa leffoja:", error);
+    
+    // Lähetetään data-loaded vaikka lataus epäonnistui
+    if (window.electronAPI) {
+      try {
+        window.electronAPI.sendMessage("data-loaded", null);
+        console.log("✅ 'data-loaded' lähetetty virheen jälkeen");
+      } catch (err) {
+        console.error("❌ IPC-viesti epäonnistui virheen jälkeen:", err);
+      }
+    }
+  }
+};
+
 
   const setupRealtimeSubscription = () => {
     const channel = supabase

@@ -11,8 +11,8 @@ async function releaseProcess() {
     console.log("📦 Rakennetaan Windows-paketti ja julkaistaan...");
     await builder.build({
       publish: "always",
-      win: ["nsis"], // Buildaa vain Windowsille
-      // linux: [], // Tyhjä = ei buildata
+      //win: ["nsis"],
+      linux: ["AppImage"],
       // mac: [] // Tyhjä = ei buildata
     });
     console.log("✅ Windows-julkaisu onnistui!\n");
