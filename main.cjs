@@ -38,7 +38,7 @@ let splashShownAt = null;
 let dataLoaded = false;
 let mainWindowReady = false;
 let updatesChecked = false;
-const MIN_SPLASH_TIME = 2000; // 2 sekuntia
+const MIN_SPLASH_TIME = 2; // tää oli vähä fail
 
 function tryCloseSplash() {
   log.info(`🔍 tryCloseSplash: dataLoaded=${dataLoaded}, mainWindowReady=${mainWindowReady}, updatesChecked=${updatesChecked}`);

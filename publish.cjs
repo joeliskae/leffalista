@@ -8,14 +8,14 @@ async function releaseProcess() {
     execSync("npm run build", { stdio: "inherit" });
     console.log("✅ Frontend rakennettu!\n");
 
-    console.log("📦 Rakennetaan Windows-paketti ja julkaistaan...");
+    console.log("📦 Rakennetaan paketti ja julkaistaan...");
     await builder.build({
       publish: "always",
-      //win: ["nsis"],
-      linux: ["AppImage"],
+      win: ["nsis"],
+      //linux: ["AppImage"],
       // mac: [] // Tyhjä = ei buildata
     });
-    console.log("✅ Windows-julkaisu onnistui!\n");
+    console.log("✅ Julkaisu onnistui!\n");
     
     console.log("🔧 Päivitetään versionumero seuraavaa julkaisua varten...");
     execSync("node bump-version.js", { stdio: "inherit" });

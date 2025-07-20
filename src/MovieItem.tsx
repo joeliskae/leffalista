@@ -28,13 +28,13 @@ export const MovieItem: React.FC<MovieItemProps> = ({
     movie.watched ? "watched" : "",
     bothHearted ? "both-hearted" : ""
   ].filter(Boolean).join(" ");
-
+  //  {movie.year && `(${movie.year})`}
   return (
     <div className={cssClasses}>
       {movie.poster && <img src={movie.poster} alt="" className="poster" />}
       
       <div className="movie-title" onClick={() => onTitleClick(movie)}>
-        {movie.title} {movie.year && `(${movie.year})`}
+        {movie.title} 
       </div>
       
       {movie.rating && (
